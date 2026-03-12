@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>FC Bình Minh</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+font-family:Arial;
+margin:0;
+padding:20px;
+background:#f4f6f8;
+}
+
+h1{
+text-align:center;
+}
+
+.controls{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+margin-bottom:20px;
+}
+
+select,button,input{
+padding:8px;
+font-size:14px;
+}
+
+button{
+cursor:pointer;
+border:none;
+background:#2f7df6;
+color:white;
+border-radius:4px;
+}
+
+.delete{
+background:#ff6b6b;
+}
+
+#inputContainer{
+max-width:700px;
+margin:auto;
+}
+
+.row{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-bottom:10px;
+}
+
+.row input{
+flex:1;
+min-width:90px;
+}
+
+.add{
+display:block;
+margin:10px auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+background:white;
+}
+
+td,th{
+border:1px solid #ccc;
+padding:8px;
+text-align:center;
+}
+
+th{
+background:#e9edf3;
+}
+
+@media (max-width:600px){
+
+.row{
+flex-direction:column;
+}
+
+.row input{
+width:100%;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>FC Bình Minh</h1>
+
+<div class="controls">
+
+<label>Số đội:</label>
+
+<select id="teamCount" onchange="updateInputs()">
+<option value="2">2 đội</option>
+<option value="3">3 đội</option>
+<option value="4">4 đội</option>
+<option value="5">5 đội</option>
+</select>
+
+<button onclick="randomTeam()">Chia đội</button>
+
+</div>
+
+<div id="inputContainer"></div>
+
+<button class="add" onclick="addRow()">Thêm</button>
+
+<h2 style="text-align:center">Kết quả</h2>
+
+<table id="resultTable">
+<thead></thead>
+<tbody></tbody>
+</table>
+
+<script>
+
+const container=document.getElementById("inputContainer")
+
+function createInput(){
+
+let input=document.createElement("input")
+input.placeholder="Tên"
+
+return input
+
+}
+
+function addRow(){
+
+let teamCount=Number(document.getElementById("teamCount").value)
+
+let row=document.createElement("div")
+row.className="row"
+
+for(let i=0;i<teamCount;i++){
+row.appendChild(createInput())
+}
+
+let del=document.createElement("button")
+del.innerText="Xoá"
+del.className="delete"
+
+del.onclick=()=>row.remove()
+
+row.appendChild(del)
+
+container.appendChild(row)
+
+}
+
+function updateInputs(){
+
+let teamCount=Number(document.getElementById("teamCount").value)
+
+let rows=document.querySelectorAll(".row")
+
+rows.forEach(row=>{
+
+let inputs=row.querySelectorAll("input")
+
+if(inputs.length<teamCount){
+
+for(let i=inputs.length;i<teamCount;i++){
+row.insertBefore(createInput(),row.lastElementChild)
+}
+
+}
+else if(inputs.length>teamCount){
+
+for(let i=inputs.length;i>teamCount;i--){
+inputs[i-1].remove()
+}
+
+}
+
+})
+
+}
+
+function shuffle(arr){
+
+for(let i=arr.length-1;i>0;i--){
+
+let j=Math.floor(Math.random()*(i+1))
+
+let t=arr[i]
+arr[i]=arr[j]
+arr[j]=t
+
+}
+
+return arr
+
+}
+
+function randomTeam(){
+
+let teamCount=Number(document.getElementById("teamCount").value)
+
+let rows=document.querySelectorAll(".row")
+
+let teams=[]
+
+for(let i=0;i<teamCount;i++)
+teams.push([])
+
+rows.forEach(row=>{
+
+let inputs=row.querySelectorAll("input")
+
+let group=[]
+
+inputs.forEach(i=>{
+if(i.value.trim()!="")
+group.push(i.value.trim())
+})
+
+if(group.length===0) return
+
+shuffle(group)
+
+let start=Math.floor(Math.random()*teamCount)
+
+group.forEach((player,index)=>{
+
+let teamIndex=(start+index)%teamCount
+
+teams[teamIndex].push(player)
+
+})
+
+})
+
+renderResult(teams)
+
+}
+
+function renderResult(teams){
+
+let thead=document.querySelector("#resultTable thead")
+let tbody=document.querySelector("#resultTable tbody")
+
+thead.innerHTML=""
+tbody.innerHTML=""
+
+let head="<tr>"
+
+teams.forEach((t,i)=>{
+head+=`<th>Đội ${i+1}</th>`
+})
+
+head+="</tr>"
+
+thead.innerHTML=head
+
+let max=0
+
+teams.forEach(t=>{
+if(t.length>max)max=t.length
+})
+
+for(let i=0;i<max;i++){
+
+let tr="<tr>"
+
+teams.forEach(t=>{
+tr+=`<td>${t[i]??""}</td>`
+})
+
+tr+="</tr>"
+
+tbody.innerHTML+=tr
+
+}
+
+}
+
+addRow()
+
+</script>
+
+</body>
+</html>
