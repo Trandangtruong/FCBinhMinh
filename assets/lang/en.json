@@ -1,0 +1,17 @@
+{
+  "play": "Level %{0}",
+  "settings": "Settings",
+  "daily_challenge": "Daily Challenge",
+  "daily_tasks": "Daily Tasks",
+  "win_title": "Did it!",
+  "win_msg": "That was a tough one, but you handled it beautifully!",
+  "lose_title": "ONE MORE CHANCE?",
+  "lose_msg": "You're so close, only %{0} tiles left!",
+  "revive": "Revive",
+  "home": "Home",
+  "claim": "Claim",
+  "start": "Start",
+  "no_ads": "No Ads",
+  "music": "Music",
+  "sound": "Sound"
+}
